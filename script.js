@@ -1,4 +1,14 @@
 // ============================================
+// Dark Mode Toggle
+// ============================================
+
+function toggleDarkMode() {
+    const isDarkMode = document.body.classList.toggle('dark-mode');
+    document.getElementById('darkModeToggle').checked = isDarkMode;
+    localStorage.setItem('darkMode', isDarkMode);
+}
+
+// ============================================
 // Section Visibility Management
 // ============================================
 
@@ -193,6 +203,13 @@ function playNotificationSound() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Load dark mode preference
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        document.getElementById('darkModeToggle').checked = true;
+    }
+
     updateTimerDisplay();
 
     const sidebarItems = document.querySelectorAll('.sidebar li');
