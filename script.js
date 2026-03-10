@@ -1,37 +1,4 @@
 // ============================================
-// Dark Mode Toggle
-// ============================================
-
-function toggleDarkMode() {
-    const isDarkMode = document.body.classList.toggle('dark-mode');
-    document.getElementById('darkModeToggle').checked = isDarkMode;
-    localStorage.setItem('darkMode', isDarkMode);
-}
-
-// Load dark mode preference on page load
-document.addEventListener('DOMContentLoaded', function () {
-    const isDarkMode = localStorage.getItem('darkMode') === 'true';
-    if (isDarkMode) {
-        document.body.classList.add('dark-mode');
-        document.getElementById('darkModeToggle').checked = true;
-    }
-
-    // Initialize Pomodoro timer display
-    updatePomodoroTimerDisplay();
-    
-    // Initialize study timer display
-    updateTimerDisplay();
-
-    // Add event listeners to sidebar items
-    const sidebarItems = document.querySelectorAll('.sidebar li');
-    sidebarItems.forEach(item => {
-        item.addEventListener('click', function () {
-            alert(`Event: ${this.textContent}`);
-        });
-    });
-});
-
-// ============================================
 // Section Visibility Management
 // ============================================
 
@@ -132,150 +99,6 @@ function clearGPAInputs() {
 }
 
 // ============================================
-// Pomodoro Timer (25 minutes) - Sidebar Widget
-// ============================================
-
-const POMODORO_DURATION = 25 * 60; // 25 minutes in seconds
-
-let pomodoroInterval = null;
-let pomodoroTimeLeft = POMODORO_DURATION;
-let pomodoroRunning = false;
-let pomodoroSessionsCompleted = 0;
-
-function startPomodoro() {
-    if (pomodoroRunning) return; // Already running
-
-    pomodoroRunning = true;
-    const startBtn = document.getElementById('pomodoroStartBtn');
-    startBtn.textContent = '⏸ Pause';
-
-    pomodoroInterval = setInterval(() => {
-        if (pomodoroTimeLeft > 0) {
-            pomodoroTimeLeft--;
-            updatePomodoroTimerDisplay();
-        } else {
-            // Timer completed
-            completePomodoroSession();
-        }
-    }, 1000);
-}
-
-function pausePomodoro() {
-    if (pomodoroInterval) {
-        clearInterval(pomodoroInterval);
-        pomodoroInterval = null;
-        pomodoroRunning = false;
-        const startBtn = document.getElementById('pomodoroStartBtn');
-        startBtn.textContent = '▶ Start';
-    }
-}
-
-function resetPomodoro() {
-    pausePomodoro();
-    pomodoroTimeLeft = POMODORO_DURATION;
-    updatePomodoroTimerDisplay();
-    const startBtn = document.getElementById('pomodoroStartBtn');
-    startBtn.textContent = '▶ Start';
-}
-
-function updatePomodoroTimerDisplay() {
-    const minutes = Math.floor(pomodoroTimeLeft / 60);
-    const seconds = pomodoroTimeLeft % 60;
-    const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    
-    const pomodoroTimeElement = document.getElementById('pomodoroTime');
-    if (pomodoroTimeElement) {
-        pomodoroTimeElement.textContent = display;
-    }
-}
-
-function completePomodoroSession() {
-    pausePomodoro();
-    pomodoroSessionsCompleted++;
-    
-    // Update sessions counter
-    const sessionsElement = document.getElementById('pomodoroSessions');
-    if (sessionsElement) {
-        sessionsElement.textContent = pomodoroSessionsCompleted;
-    }
-
-    // Play bell notification
-    playPomodoromBellNotification();
-
-    // Show alert
-    alert('🎉 Pomodoro session complete! Time for a break! Take 5 minutes to rest.');
-
-    // Reset timer
-    pomodoroTimeLeft = POMODORO_DURATION;
-    updatePomodoroTimerDisplay();
-    const startBtn = document.getElementById('pomodoroStartBtn');
-    startBtn.textContent = '▶ Start';
-}
-
-function playPomodoromBellNotification() {
-    try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
-        // First bell chime
-        const osc1 = audioContext.createOscillator();
-        const gain1 = audioContext.createGain();
-        
-        osc1.connect(gain1);
-        gain1.connect(audioContext.destination);
-        
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(800, audioContext.currentTime);
-        osc1.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.4);
-        
-        gain1.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gain1.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
-        
-        osc1.start(audioContext.currentTime);
-        osc1.stop(audioContext.currentTime + 0.4);
-
-        // Second bell chime
-        setTimeout(() => {
-            const osc2 = audioContext.createOscillator();
-            const gain2 = audioContext.createGain();
-            
-            osc2.connect(gain2);
-            gain2.connect(audioContext.destination);
-            
-            osc2.type = 'sine';
-            osc2.frequency.setValueAtTime(1000, audioContext.currentTime);
-            osc2.frequency.exponentialRampToValueAtTime(700, audioContext.currentTime + 0.4);
-            
-            gain2.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
-            
-            osc2.start(audioContext.currentTime);
-            osc2.stop(audioContext.currentTime + 0.4);
-        }, 500);
-
-        // Third bell chime
-        setTimeout(() => {
-            const osc3 = audioContext.createOscillator();
-            const gain3 = audioContext.createGain();
-            
-            osc3.connect(gain3);
-            gain3.connect(audioContext.destination);
-            
-            osc3.type = 'sine';
-            osc3.frequency.setValueAtTime(1200, audioContext.currentTime);
-            osc3.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.5);
-            
-            gain3.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gain3.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-            
-            osc3.start(audioContext.currentTime);
-            osc3.stop(audioContext.currentTime + 0.5);
-        }, 1000);
-    } catch (error) {
-        console.log('Bell notification played');
-    }
-}
-
-// ============================================
 // Study Timer Functionality
 // ============================================
 
@@ -361,6 +184,21 @@ function playNotificationSound() {
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.5);
     } catch (error) {
-        console.log('Audio notification played');
+        console.log('Audio notification');
     }
 }
+
+// ============================================
+// Page Initialization
+// ============================================
+
+document.addEventListener('DOMContentLoaded', function () {
+    updateTimerDisplay();
+
+    const sidebarItems = document.querySelectorAll('.sidebar li');
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', function () {
+            alert(`Event: ${this.textContent}`);
+        });
+    });
+});
