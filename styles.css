@@ -301,6 +301,41 @@ body.dark-mode .course-input {
     margin-bottom: 0.8rem;
 }
 
+/* GPA Calculator Styles */
+.gpa-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.course-input {
+    background-color: #f9f9f9;
+    padding: 1.2rem;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+body.dark-mode .course-input {
+    background-color: #383838;
+    border-left-color: #64b5f6;
+}
+
+.course-input h4 {
+    color: #667eea;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    margin-top: 0;
+}
+
+body.dark-mode .course-input h4 {
+    color: #64b5f6;
+}
+
+.course-input input {
+    margin-bottom: 0.8rem;
+}
+
 /* Input Styles */
 input {
     width: 100%;

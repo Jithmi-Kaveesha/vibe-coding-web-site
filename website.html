@@ -34,15 +34,33 @@
 
         <!-- GPA Calculator -->
         <div id="gpa" class="section">
-            <h2>GPA Calculator</h2>
-            <p style="color: #666; margin-bottom: 1rem;">Enter your grades (0-100) and we'll calculate your GPA on a 4.0 scale.</p>
+            <h2>📚 GPA Calculator</h2>
+            <p style="color: #666; margin-bottom: 1.5rem;">Enter course credits and grades (0-100) to calculate your weighted GPA on a 4.0 scale.</p>
 
-            <input type="number" id="grade1" placeholder="Grade 1 (0-100)" min="0" max="100">
-            <input type="number" id="grade2" placeholder="Grade 2 (0-100)" min="0" max="100">
-            <input type="number" id="grade3" placeholder="Grade 3 (0-100)" min="0" max="100">
+            <div class="gpa-container">
+                <div class="course-input">
+                    <h4>Course 1</h4>
+                    <input type="number" id="credits1" placeholder="Credits" min="0" max="5" step="0.5">
+                    <input type="number" id="grade1" placeholder="Grade (0-100)" min="0" max="100">
+                </div>
 
-            <button onclick="calculateGPA()">Calculate GPA</button>
-            <button onclick="clearGPAInputs()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">Clear</button>
+                <div class="course-input">
+                    <h4>Course 2</h4>
+                    <input type="number" id="credits2" placeholder="Credits" min="0" max="5" step="0.5">
+                    <input type="number" id="grade2" placeholder="Grade (0-100)" min="0" max="100">
+                </div>
+
+                <div class="course-input">
+                    <h4>Course 3</h4>
+                    <input type="number" id="credits3" placeholder="Credits" min="0" max="5" step="0.5">
+                    <input type="number" id="grade3" placeholder="Grade (0-100)" min="0" max="100">
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <button onclick="calculateGPA()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 0.75rem 2rem; font-size: 1.05rem;">📊 Calculate GPA</button>
+                <button onclick="clearGPAInputs()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 0.75rem 2rem; font-size: 1.05rem; margin-left: 0.5rem;">Clear All</button>
+            </div>
 
             <div id="result"></div>
         </div>
