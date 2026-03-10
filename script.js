@@ -210,12 +210,33 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('darkModeToggle').checked = true;
     }
 
-    updateTimerDisplay();
-
+    // Animate sidebar items on page load
     const sidebarItems = document.querySelectorAll('.sidebar li');
-    sidebarItems.forEach(item => {
+    sidebarItems.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(-20px)';
+        setTimeout(() => {
+            item.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            item.style.opacity = '1';
+            item.style.transform = 'translateX(0)';
+        }, 100 + index * 100);
+        
         item.addEventListener('click', function () {
             alert(`Event: ${this.textContent}`);
         });
     });
+
+    // Animate content on page load
+    const contentSection = document.querySelector('.content');
+    if (contentSection) {
+        contentSection.style.opacity = '0';
+        contentSection.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            contentSection.style.transition = 'all 0.8s ease-out';
+            contentSection.style.opacity = '1';
+            contentSection.style.transform = 'translateY(0)';
+        }, 200);
+    }
+
+    updateTimerDisplay();
 });
