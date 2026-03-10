@@ -12,9 +12,9 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Navigation Bar Styles */
+/* Navigation Bar Styles - UCSC Branding */
 .navbar {
-    background: linear-gradient(135deg, #30aba0 0%, #3a8cb8 100%);
+    background: linear-gradient(135deg, #8B2635 0%, #B83A4B 100%);
     color: white;
     padding: 1rem 2rem;
     display: flex;
@@ -32,11 +32,13 @@ body {
     gap: 1rem;
 }
 
+/* UCSC Logo */
 .ucsc-logo {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    background-color: #B83A4B;
 }
 
 .navbar h2 {
@@ -227,7 +229,7 @@ input:focus {
     box-shadow: 0 0 5px rgba(184, 58, 75, 0.3);
 }
 
-/* Button Styles */
+/* Button Styles - UCSC Maroon & Gold */
 button {
     background: linear-gradient(135deg, #B83A4B 0%, #FFD700 100%);
     color: white;
@@ -329,7 +331,7 @@ button:active {
     }
 }
 
-/* Dark Mode Styles */
+/* Dark Mode Styles - UCSC Colors */
 body.dark-mode {
     background: linear-gradient(135deg, #0f1c4a 0%, #1a2d5a 50%, #2a4a7a 100%);
     color: #e0e0e0;

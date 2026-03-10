@@ -29,7 +29,6 @@ function showSection(sectionId) {
 // ============================================
 
 function calculateGPA() {
-    // Get input values for all courses
     const credits = [
         parseFloat(document.getElementById('credits1').value),
         parseFloat(document.getElementById('credits2').value),
@@ -42,7 +41,6 @@ function calculateGPA() {
         parseFloat(document.getElementById('grade3').value)
     ];
 
-    // Validate inputs
     let validCourses = 0;
     for (let i = 0; i < 3; i++) {
         if (!isNaN(credits[i]) && !isNaN(grades[i])) {
@@ -61,7 +59,6 @@ function calculateGPA() {
         return;
     }
 
-    // Calculate weighted GPA
     let totalWeightedGPA = 0;
     let totalCredits = 0;
     let averageGrade = 0;
@@ -69,7 +66,6 @@ function calculateGPA() {
 
     for (let i = 0; i < 3; i++) {
         if (!isNaN(credits[i]) && !isNaN(grades[i]) && credits[i] > 0) {
-            // Convert grade (0-100) to 4.0 scale
             const gpa = (grades[i] / 100) * 4.0;
             totalWeightedGPA += gpa * credits[i];
             totalCredits += credits[i];
@@ -203,14 +199,12 @@ function playNotificationSound() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Load dark mode preference
     const isDarkMode = localStorage.getItem('darkMode') === 'true';
     if (isDarkMode) {
         document.body.classList.add('dark-mode');
         document.getElementById('darkModeToggle').checked = true;
     }
 
-    // Animate sidebar items on page load
     const sidebarItems = document.querySelectorAll('.sidebar li');
     sidebarItems.forEach((item, index) => {
         item.style.opacity = '0';
@@ -226,7 +220,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Animate content on page load
     const contentSection = document.querySelector('.content');
     if (contentSection) {
         contentSection.style.opacity = '0';
