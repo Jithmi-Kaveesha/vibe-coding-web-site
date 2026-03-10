@@ -16,9 +16,11 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('darkModeToggle').checked = true;
     }
 
-    // Initialize timers
-    updatePomodoroDisplay();
-    updateTotalTime();
+    // Initialize Pomodoro timer display
+    updatePomodoroTimerDisplay();
+    
+    // Initialize study timer display
+    updateTimerDisplay();
 
     // Add event listeners to sidebar items
     const sidebarItems = document.querySelectorAll('.sidebar li');
@@ -130,35 +132,29 @@ function clearGPAInputs() {
 }
 
 // ============================================
-// Pomodoro Timer (25 minutes)
+// Pomodoro Timer (25 minutes) - Sidebar Widget
 // ============================================
 
-const WORK_DURATION = 25 * 60; // 25 minutes in seconds
-const BREAK_DURATION = 5 * 60; // 5 minutes break
+const POMODORO_DURATION = 25 * 60; // 25 minutes in seconds
 
 let pomodoroInterval = null;
-let pomodoroTimeLeft = WORK_DURATION;
-let isPomodoroPaused = false;
-let sessionsCompleted = 0;
-let totalStudySeconds = 0;
-let isWorkSession = true;
+let pomodoroTimeLeft = POMODORO_DURATION;
+let pomodoroRunning = false;
+let pomodoroSessionsCompleted = 0;
 
 function startPomodoro() {
-    if (pomodoroInterval) return; // Already running
+    if (pomodoroRunning) return; // Already running
 
-    if (pomodoroTimeLeft === WORK_DURATION) {
-        // Starting fresh work session
-    }
-
-    isPomodoroPaused = false;
+    pomodoroRunning = true;
+    const startBtn = document.getElementById('pomodoroStartBtn');
+    startBtn.textContent = '⏸ Pause';
 
     pomodoroInterval = setInterval(() => {
         if (pomodoroTimeLeft > 0) {
             pomodoroTimeLeft--;
-            totalStudySeconds++;
-            updatePomodoroDisplay();
+            updatePomodoroTimerDisplay();
         } else {
-            // Session completed
+            // Timer completed
             completePomodoroSession();
         }
     }, 1000);
@@ -168,78 +164,74 @@ function pausePomodoro() {
     if (pomodoroInterval) {
         clearInterval(pomodoroInterval);
         pomodoroInterval = null;
-        isPomodoroPaused = true;
+        pomodoroRunning = false;
+        const startBtn = document.getElementById('pomodoroStartBtn');
+        startBtn.textContent = '▶ Start';
     }
 }
 
 function resetPomodoro() {
     pausePomodoro();
-    pomodoroTimeLeft = WORK_DURATION;
-    isWorkSession = true;
-    updatePomodoroDisplay();
+    pomodoroTimeLeft = POMODORO_DURATION;
+    updatePomodoroTimerDisplay();
+    const startBtn = document.getElementById('pomodoroStartBtn');
+    startBtn.textContent = '▶ Start';
+}
+
+function updatePomodoroTimerDisplay() {
+    const minutes = Math.floor(pomodoroTimeLeft / 60);
+    const seconds = pomodoroTimeLeft % 60;
+    const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    
+    const pomodoroTimeElement = document.getElementById('pomodoroTime');
+    if (pomodoroTimeElement) {
+        pomodoroTimeElement.textContent = display;
+    }
 }
 
 function completePomodoroSession() {
     pausePomodoro();
-    sessionsCompleted++;
-    updateTotalTime();
-
-    // Play bell notification
-    playBellNotification();
-
-    // Show alert
-    alert('🎉 Great work! 25-minute Pomodoro session completed!\n\nTime for a 5-minute break!');
-
-    // Reset timer for next session
-    pomodoroTimeLeft = WORK_DURATION;
-    isWorkSession = true;
-    updatePomodoroDisplay();
-}
-
-function updatePomodoroDisplay() {
-    const minutes = Math.floor(pomodoroTimeLeft / 60);
-    const seconds = pomodoroTimeLeft % 60;
-    const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    document.getElementById('time').textContent = display;
-
-    const sessionLabel = document.getElementById('sessionLabel');
-    if (sessionLabel) {
-        sessionLabel.textContent = isWorkSession ? '💪 Work Session' : '☕ Break Time';
+    pomodoroSessionsCompleted++;
+    
+    // Update sessions counter
+    const sessionsElement = document.getElementById('pomodoroSessions');
+    if (sessionsElement) {
+        sessionsElement.textContent = pomodoroSessionsCompleted;
     }
 
-    document.getElementById('sessionsCompleted').textContent = sessionsCompleted;
+    // Play bell notification
+    playPomodoromBellNotification();
+
+    // Show alert
+    alert('🎉 Pomodoro session complete! Time for a break! Take 5 minutes to rest.');
+
+    // Reset timer
+    pomodoroTimeLeft = POMODORO_DURATION;
+    updatePomodoroTimerDisplay();
+    const startBtn = document.getElementById('pomodoroStartBtn');
+    startBtn.textContent = '▶ Start';
 }
 
-function updateTotalTime() {
-    const hours = Math.floor(totalStudySeconds / 3600);
-    const minutes = Math.floor((totalStudySeconds % 3600) / 60);
-    const seconds = totalStudySeconds % 60;
-    const display = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    document.getElementById('totalTime').textContent = display;
-}
-
-function playBellNotification() {
+function playPomodoromBellNotification() {
     try {
-        // Create bell sound using Web Audio API
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
-        // Create nodes
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
+        // First bell chime
+        const osc1 = audioContext.createOscillator();
+        const gain1 = audioContext.createGain();
         
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+        osc1.connect(gain1);
+        gain1.connect(audioContext.destination);
         
-        // Bell sound characteristics
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(500, audioContext.currentTime + 0.5);
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(800, audioContext.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.4);
         
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        gain1.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gain1.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
         
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.5);
+        osc1.start(audioContext.currentTime);
+        osc1.stop(audioContext.currentTime + 0.4);
 
         // Second bell chime
         setTimeout(() => {
@@ -253,13 +245,122 @@ function playBellNotification() {
             osc2.frequency.setValueAtTime(1000, audioContext.currentTime);
             osc2.frequency.exponentialRampToValueAtTime(700, audioContext.currentTime + 0.4);
             
-            gain2.gain.setValueAtTime(0.25, audioContext.currentTime);
+            gain2.gain.setValueAtTime(0.3, audioContext.currentTime);
             gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
             
             osc2.start(audioContext.currentTime);
             osc2.stop(audioContext.currentTime + 0.4);
-        }, 600);
+        }, 500);
+
+        // Third bell chime
+        setTimeout(() => {
+            const osc3 = audioContext.createOscillator();
+            const gain3 = audioContext.createGain();
+            
+            osc3.connect(gain3);
+            gain3.connect(audioContext.destination);
+            
+            osc3.type = 'sine';
+            osc3.frequency.setValueAtTime(1200, audioContext.currentTime);
+            osc3.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.5);
+            
+            gain3.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gain3.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            osc3.start(audioContext.currentTime);
+            osc3.stop(audioContext.currentTime + 0.5);
+        }, 1000);
     } catch (error) {
-        console.log('Audio notification played (Web Audio API not available)');
+        console.log('Bell notification played');
+    }
+}
+
+// ============================================
+// Study Timer Functionality
+// ============================================
+
+let timerInterval = null;
+let totalSeconds = 0;
+let isRunning = false;
+
+function setTimerDuration() {
+    const minutes = parseInt(document.getElementById('timerMinutes').value) || 0;
+    const seconds = parseInt(document.getElementById('timerSeconds').value) || 0;
+
+    if (minutes < 0 || seconds < 0 || (minutes === 0 && seconds === 0)) {
+        alert('Please enter a valid time duration');
+        return;
+    }
+
+    totalSeconds = minutes * 60 + seconds;
+    updateTimerDisplay();
+}
+
+function startTimer() {
+    if (totalSeconds === 0) {
+        alert('Please set a time duration first');
+        return;
+    }
+
+    if (isRunning) {
+        return;
+    }
+
+    isRunning = true;
+
+    timerInterval = setInterval(() => {
+        if (totalSeconds > 0) {
+            totalSeconds--;
+            updateTimerDisplay();
+        } else {
+            stopTimer();
+            alert('⏰ Study session complete! Great work!');
+            playNotificationSound();
+        }
+    }, 1000);
+}
+
+function stopTimer() {
+    isRunning = false;
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+
+function resetTimer() {
+    stopTimer();
+    totalSeconds = 0;
+    document.getElementById('timerMinutes').value = '';
+    document.getElementById('timerSeconds').value = '';
+    updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    document.getElementById('time').textContent = display;
+}
+
+function playNotificationSound() {
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+    } catch (error) {
+        console.log('Audio notification played');
     }
 }

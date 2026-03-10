@@ -336,8 +336,84 @@ body.dark-mode .course-input h4 {
     margin-bottom: 0.8rem;
 }
 
-/* Input Styles */
-input {
+/* Pomodoro Timer Widget */
+.pomodoro-widget {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+body.dark-mode .pomodoro-widget {
+    background: linear-gradient(135deg, #c92a2a 0%, #a61e4d 100%);
+}
+
+.pomodoro-widget h4 {
+    margin: 0 0 0.8rem 0;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.pomodoro-timer-display {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 1rem 0;
+    font-family: 'Courier New', monospace;
+    color: white;
+}
+
+#pomodoroTime {
+    display: inline-block;
+    min-width: 80px;
+}
+
+.pomodoro-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0.8rem 0;
+    justify-content: center;
+}
+
+.pomo-btn {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: white;
+    border: 2px solid white;
+    padding: 0.5rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    flex: 1;
+    max-width: 90px;
+}
+
+.pomo-btn:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-2px);
+}
+
+.pomo-btn:active {
+    transform: translateY(0);
+}
+
+.pomo-reset {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.pomodoro-info {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.pomodoro-info p {
+    margin: 0.3rem 0;
+    color: white;
+}
     width: 100%;
     max-width: 300px;
     padding: 0.75rem;
